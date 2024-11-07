@@ -1,12 +1,18 @@
-package domain;
+package observer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
-import java.util.Iterator;
 import iterator.Covid19PacientIterator;
 
-public class Covid19Pacient {
+import domain.Symptom;
+import domain.symptomFactory;
+
+import java.util.Iterator;
+
+
+public class Covid19Pacient extends Observable {
     private String name;
     private int age;
     private Map<Symptom, Integer> symptoms = new HashMap<Symptom, Integer>();
@@ -33,17 +39,21 @@ public class Covid19Pacient {
     }
 
     // Ahora usa la SymptomFactory para obtener síntomas únicos
-    public Symptom addSymptomByName(String symptomName, Integer w) {
+
+	public Symptom addSymptomByName(String symptomName, Integer w) {
+		System.out.println("SE AGREGOOOOOOOOOOO\n");
         Symptom s = symptomFactory.createSymptom(symptomName);
         if (s != null) {
             symptoms.put(s, w);
+            setChanged(); 
+            notifyObservers();
         }
+      
         return s;
     }
-
     public void addSymptom(Symptom c, Integer w){
 		symptoms.put(c,w);
-	}
+    }
     
     public int getWeight(Symptom s) {
         return symptoms.get(s);
@@ -61,10 +71,14 @@ public class Covid19Pacient {
         return null;
     }
 
-    public Symptom removeSymptomByName(String symptomName) {
+
+	public Symptom removeSymptomByName(String symptomName) {
         Symptom s = getSymptomByName(symptomName);
-        if (s != null) 
+        if (s != null) {
             symptoms.remove(s);
+        setChanged(); 
+        notifyObservers();
+        }
         return s;
     }
     public Iterator iterator() {
